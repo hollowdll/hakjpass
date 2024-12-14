@@ -1,16 +1,18 @@
 package hakjpass
 
 import (
-	"fmt"
+	"crypto/rand"
+	"math/big"
 
 	"github.com/hollowdll/hakjpass/errors"
 )
 
 const (
-	PasswordLowerChars   = "abcdefghijklmnopqrstuvwxyz"
-	PasswordUpperChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	PasswordNumberChars  = "0123456789"
-	PasswordSpecialChars = "!@#$%^&*()-_=+[]{}|;:,.<>?/"
+	PasswordLowerChars       = "abcdefghijklmnopqrstuvwxyz"
+	PasswordUpperChars       = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	PasswordNumberChars      = "0123456789"
+	PasswordSpecialChars     = "!@#$%^&*()-_=+[]{}|;:,.<>?/"
+	MinPasswordLength    int = 4
 )
 
 type PasswordOptions struct {
@@ -29,12 +31,66 @@ func DefaultPasswordOptions() *PasswordOptions {
 	}
 }
 
+// GenerateRandomSecurePassword generates a random secure password using the specified length and options.
+// This function uses the crypto package in the Go standard library for cryptographically secure random values.
 func GenerateRandomSecurePassword(length int, opts *PasswordOptions) (string, error) {
-	if length < 4 {
+	if length < MinPasswordLength {
 		return "", errors.ErrPasswordTooShort
 	}
 
-	// TODO logic
+	password := []byte{}
+	charsetAll := opts.LowerChars + opts.UpperChars + opts.NumberChars + opts.SpecialChars
+	charsets := []string{opts.LowerChars, opts.UpperChars, opts.NumberChars, opts.SpecialChars}
 
-	return "", nil
+	// include at least one character from each character set
+	for _, charset := range charsets {
+		index, err := randomIndex(len(charset))
+		if err != nil {
+			return "", err
+		}
+		password = append(password, charset[index])
+	}
+
+	// fill the remaining characters
+	for i := MinPasswordLength; i < length; i++ {
+		randomChar, err := randomChar(charsetAll)
+		if err != nil {
+			return "", err
+		}
+		password = append(password, randomChar)
+	}
+
+	// randomly shuffle the password to avoid predictable patterns
+	if err := randomlyShuffleChars(password); err != nil {
+		return "", err
+	}
+
+	return string(password), nil
+}
+
+func randomChar(charset string) (byte, error) {
+	index, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+	if err != nil {
+		return 0, err
+	}
+	return charset[index.Int64()], nil
+}
+
+func randomIndex(max int) (int, error) {
+	num, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
+	if err != nil {
+		return 0, err
+	}
+	return int(num.Int64()), nil
+}
+
+func randomlyShuffleChars(slice []byte) error {
+	for i := range slice {
+		j, err := randomIndex(len(slice))
+		if err != nil {
+			return err
+		}
+		slice[i], slice[j] = slice[j], slice[i]
+	}
+	return nil
 }
