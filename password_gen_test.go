@@ -9,20 +9,22 @@ import (
 )
 
 func TestGenerateRandomSecurePassword(t *testing.T) {
-	length := 4
 	opts := &PasswordOptions{
 		LowerChars:   "abc",
 		UpperChars:   "ABC",
 		NumberChars:  "123",
 		SpecialChars: "!?-",
 	}
-	password, err := GenerateRandomSecurePassword(length, opts)
-	require.NoError(t, err)
-	require.Equal(t, length, len(password))
 
-	charsets := []string{opts.LowerChars, opts.UpperChars, opts.NumberChars, opts.SpecialChars}
-	for _, charset := range charsets {
-		require.True(t, common.ContainsCharFromCharset(password, charset))
+	for _, length := range []int{4, 12, 20, 50, 99, 101, 200, 999} {
+		password, err := GenerateRandomSecurePassword(length, opts)
+		require.NoError(t, err)
+		require.Equal(t, length, len(password))
+
+		charsets := []string{opts.LowerChars, opts.UpperChars, opts.NumberChars, opts.SpecialChars}
+		for _, charset := range charsets {
+			require.True(t, common.ContainsCharFromCharset(password, charset))
+		}
 	}
 }
 

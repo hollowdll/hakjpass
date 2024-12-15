@@ -32,7 +32,7 @@ func DefaultPasswordOptions() *PasswordOptions {
 }
 
 // GenerateRandomSecurePassword generates a random secure password using the specified length and opts.
-// The generated password includes at least one character of each character set in the opts.
+// The generated password includes at least one character from each character set in the opts.
 // This function uses the crypto package in the Go standard library for cryptographically secure random values.
 func GenerateRandomSecurePassword(length int, opts *PasswordOptions) (string, error) {
 	if length < MinPasswordLength {
