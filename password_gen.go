@@ -31,7 +31,8 @@ func DefaultPasswordOptions() *PasswordOptions {
 	}
 }
 
-// GenerateRandomSecurePassword generates a random secure password using the specified length and options.
+// GenerateRandomSecurePassword generates a random secure password using the specified length and opts.
+// The generated password includes at least one character of each character set in the opts.
 // This function uses the crypto package in the Go standard library for cryptographically secure random values.
 func GenerateRandomSecurePassword(length int, opts *PasswordOptions) (string, error) {
 	if length < MinPasswordLength {
@@ -53,11 +54,11 @@ func GenerateRandomSecurePassword(length int, opts *PasswordOptions) (string, er
 
 	// fill the remaining characters
 	for i := MinPasswordLength; i < length; i++ {
-		randomChar, err := randomChar(charsetAll)
+		index, err := randomIndex(len(charsetAll))
 		if err != nil {
 			return "", err
 		}
-		password = append(password, randomChar)
+		password = append(password, charsetAll[index])
 	}
 
 	// randomly shuffle the password to avoid predictable patterns
@@ -68,14 +69,7 @@ func GenerateRandomSecurePassword(length int, opts *PasswordOptions) (string, er
 	return string(password), nil
 }
 
-func randomChar(charset string) (byte, error) {
-	index, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
-	if err != nil {
-		return 0, err
-	}
-	return charset[index.Int64()], nil
-}
-
+// randomIndex generates a random index between 0 and max. max is exclusive.
 func randomIndex(max int) (int, error) {
 	num, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
 	if err != nil {
