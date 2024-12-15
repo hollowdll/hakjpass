@@ -3,6 +3,7 @@ module github.com/hollowdll/hakjpass
 go 1.22.4
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
 )
