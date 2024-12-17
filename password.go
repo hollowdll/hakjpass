@@ -25,3 +25,8 @@ func NewPasswordEntry(password string, username string, description string, grou
 		Group:       group,
 	}, nil
 }
+
+// PasswordEntryList is a list of password entries
+type PasswordEntryList struct {
+	passwordEntries []PasswordEntry
+}
