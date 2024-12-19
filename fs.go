@@ -1,6 +1,8 @@
 package hakjpass
 
-import "os"
+import (
+	"os"
+)
 
 func writeToFile(filepath string, data []byte) error {
 	err := os.WriteFile(filepath, data, 0644)
