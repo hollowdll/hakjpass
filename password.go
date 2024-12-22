@@ -21,6 +21,25 @@ func NewPasswordEntry(password string, username string, description string, grou
 	}, nil
 }
 
+func FindPasswordEntryById(passwordEntries []*passwordstoragepb.PasswordEntry, id string) *passwordstoragepb.PasswordEntry {
+	for _, passwordEntry := range passwordEntries {
+		if passwordEntry.Id == id {
+			return passwordEntry
+		}
+	}
+	return nil
+}
+
+func FindPasswordEntriesByGroup(passwordEntries []*passwordstoragepb.PasswordEntry, group string) []*passwordstoragepb.PasswordEntry {
+	matchingPasswordEntries := []*passwordstoragepb.PasswordEntry{}
+	for _, passwordEntry := range passwordEntries {
+		if passwordEntry.Group == group {
+			matchingPasswordEntries = append(matchingPasswordEntries, passwordEntry)
+		}
+	}
+	return matchingPasswordEntries
+}
+
 func serializePasswordEntryListToBinary(passwordEntryList *passwordstoragepb.PasswordEntryList) ([]byte, error) {
 	data, err := proto.Marshal(passwordEntryList)
 	if err != nil {

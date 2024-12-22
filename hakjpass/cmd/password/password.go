@@ -14,9 +14,11 @@ var (
 		Short: "Manage passwords",
 		Long:  "Manage passwords",
 	}
-	group       string
-	username    string
-	description string
+	group        string
+	username     string
+	description  string
+	id           string
+	showPassword bool
 )
 
 func init() {
