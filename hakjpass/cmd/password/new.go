@@ -1,6 +1,10 @@
 package password
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/hollowdll/hakjpass"
+	"github.com/hollowdll/hakjpass/internal/common"
+	"github.com/spf13/cobra"
+)
 
 var (
 	cmdPasswordNew = &cobra.Command{
@@ -26,5 +30,32 @@ func init() {
 }
 
 func saveNewPassword(cmd *cobra.Command) {
-	// if cmd.Flags().Changed("group")
+	password := promptPassword()
+
+	if !cmd.Flags().Changed("group") {
+		groupInput, err := common.PromptInput("Group: ")
+		cobra.CheckErr(err)
+		group = groupInput
+	}
+
+	if !cmd.Flags().Changed("username") {
+		usernameInput, err := common.PromptInput("Username: ")
+		cobra.CheckErr(err)
+		username = usernameInput
+	}
+
+	if !cmd.Flags().Changed("description") {
+		descriptionInput, err := common.PromptInput("Description: ")
+		cobra.CheckErr(err)
+		description = descriptionInput
+	}
+
+	passwordEntry, err := hakjpass.NewPasswordEntry(password, username, description, group)
+	cobra.CheckErr(err)
+
+	hakjpassStorage, err := hakjpass.NewHakjpassStorage()
+	cobra.CheckErr(err)
+
+	err = hakjpassStorage.SavePassword(passwordEntry)
+	cobra.CheckErr(err)
 }

@@ -8,7 +8,7 @@ import (
 const (
 	PasswordStorageFileName       string = "hakjpass_storage"
 	PasswordStorageBackupFileName string = "hakjpass_storage.bak"
-	HakjpassDataDirName           string = "hakjpass-data"
+	HakjpassDataDirName           string = ".hakjpass-data"
 	dataDirPermission                    = 0700
 	PasswordStorageFilePermission        = 0600
 )
@@ -21,11 +21,29 @@ func writeToFile(filepath string, data []byte, perm os.FileMode) error {
 	return nil
 }
 
-func readFile(filepath string) ([]byte, error) {
-	data, err := os.ReadFile(filepath)
+func readFile(filepath string, perm os.FileMode) ([]byte, error) {
+	file, err := os.OpenFile(filepath, os.O_RDONLY|os.O_CREATE, perm)
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	fileSize := fileInfo.Size()
+	if fileSize == 0 {
+		return []byte{}, nil
+	}
+
+	data := make([]byte, fileSize)
+	_, err = file.Read(data)
+	if err != nil {
+		return nil, err
+	}
+
 	return data, nil
 }
 

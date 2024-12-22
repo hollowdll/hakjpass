@@ -1,6 +1,10 @@
 package hakjpass
 
-import passwordstoragepb "github.com/hollowdll/hakjpass/pb"
+import (
+	"path/filepath"
+
+	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
+)
 
 // PasswordStorage is the interface used for managing passwords.
 type PasswordStorage interface {
@@ -17,17 +21,22 @@ type HakjpassStorage struct {
 	symmetricKeyPassword  string
 }
 
-func NewHakjpassStorage() *HakjpassStorage {
+func NewHakjpassStorage() (*HakjpassStorage, error) {
+	dataDir, err := createDataDirIfNotExists()
+	if err != nil {
+		return nil, err
+	}
+
 	return &HakjpassStorage{
-		storageFilePath:       "",
-		storageBackupFilePath: "",
+		storageFilePath:       filepath.Join(dataDir, PasswordStorageFileName),
+		storageBackupFilePath: filepath.Join(dataDir, PasswordStorageBackupFileName),
 		symmetricKeyFilePath:  "",
 		symmetricKeyPassword:  "",
-	}
+	}, nil
 }
 
 func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error {
-	storageData, err := readFile(s.storageFilePath)
+	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
 		return err
 	}
@@ -48,7 +57,7 @@ func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.Password
 }
 
 func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, error) {
-	storageData, err := readFile(s.storageFilePath)
+	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
 		return nil, err
 	}

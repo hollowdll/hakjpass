@@ -15,7 +15,8 @@ var CmdPassword = &cobra.Command{
 }
 
 func init() {
-	CmdPassword.AddCommand(cmdGen)
+	CmdPassword.AddCommand(cmdPasswordGen)
+	CmdPassword.AddCommand(cmdPasswordNew)
 }
 
 func promptPassword() string {

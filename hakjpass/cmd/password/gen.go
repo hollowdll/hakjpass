@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	cmdGen = &cobra.Command{
+	cmdPasswordGen = &cobra.Command{
 		Use:   "gen",
 		Short: "Generate password",
 		Long: `Generate a random secure password with the specified length.
@@ -29,7 +29,7 @@ hakjpass gen --length 30`,
 )
 
 func init() {
-	cmdGen.Flags().IntVarP(&passwordLength, "length", "l", 20, "Length of the password. Minimum is 4")
+	cmdPasswordGen.Flags().IntVarP(&passwordLength, "length", "l", 20, "Length of the password. Minimum is 4")
 }
 
 func generateRandomSecurePassword() {
