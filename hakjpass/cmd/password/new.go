@@ -18,9 +18,6 @@ and the input is not echoed to the terminal to improve security.
 			saveNewPassword(cmd)
 		},
 	}
-	group       string
-	username    string
-	description string
 )
 
 func init() {

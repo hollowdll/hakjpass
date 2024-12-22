@@ -8,15 +8,21 @@ import (
 	"golang.org/x/term"
 )
 
-var CmdPassword = &cobra.Command{
-	Use:   "password",
-	Short: "Manage passwords",
-	Long:  "Manage passwords",
-}
+var (
+	CmdPassword = &cobra.Command{
+		Use:   "password",
+		Short: "Manage passwords",
+		Long:  "Manage passwords",
+	}
+	group       string
+	username    string
+	description string
+)
 
 func init() {
 	CmdPassword.AddCommand(cmdPasswordGen)
 	CmdPassword.AddCommand(cmdPasswordNew)
+	CmdPassword.AddCommand(cmdPasswordLs)
 }
 
 func promptPassword() string {
