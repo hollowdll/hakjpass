@@ -7,6 +7,7 @@ import (
 
 const (
 	PasswordStorageFileName       string = "hakjpass_storage"
+	PasswordStorageBackupFileName string = "hakjpass_storage.bak"
 	HakjpassDataDirName           string = "hakjpass-data"
 	dataDirPermission                    = 0700
 	PasswordStorageFilePermission        = 0600
@@ -28,28 +29,30 @@ func readFile(filepath string) ([]byte, error) {
 	return data, nil
 }
 
-func createDataDirIfNotExists() error {
-	configDir, err := os.UserConfigDir()
+func createDataDirIfNotExists() (string, error) {
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	dataDir := filepath.Join(configDir, HakjpassDataDirName)
+	dataDir := filepath.Join(homeDir, HakjpassDataDirName)
 
 	err = os.MkdirAll(dataDir, dataDirPermission)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = os.Chmod(dataDir, dataDirPermission)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return dataDir, nil
 }
 
-func fileExists(filepath string) (bool, error) {
+// FileExists returns true if the given filepath is an existing file.
+// non-nil error is returned if this check fails.
+func FileExists(filepath string) (bool, error) {
 	_, err := os.Stat(filepath)
 	if err != nil {
 		if os.IsNotExist(err) {

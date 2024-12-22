@@ -11,9 +11,19 @@ type PasswordStorage interface {
 }
 
 type HakjpassStorage struct {
-	storageFilePath      string
-	symmetricKeyFilePath string
-	symmetricKeyPassword string
+	storageFilePath       string
+	storageBackupFilePath string
+	symmetricKeyFilePath  string
+	symmetricKeyPassword  string
+}
+
+func NewHakjpassStorage() *HakjpassStorage {
+	return &HakjpassStorage{
+		storageFilePath:       "",
+		storageBackupFilePath: "",
+		symmetricKeyFilePath:  "",
+		symmetricKeyPassword:  "",
+	}
 }
 
 func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error {
@@ -30,7 +40,7 @@ func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.Password
 	if err != nil {
 		return err
 	}
-	err = writeToFile(s.storageFilePath, updatedStorageData)
+	err = writeToFile(s.storageFilePath, updatedStorageData, PasswordStorageFilePermission)
 	if err != nil {
 		return err
 	}
