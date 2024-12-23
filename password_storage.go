@@ -12,6 +12,10 @@ type PasswordStorage interface {
 	SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error
 	// GetPasswords returns password entries.
 	GetPasswords() ([]*passwordstoragepb.PasswordEntry, error)
+	// DeletePasswords removes the password entry with the id.
+	DeletePasswordById(id string) error
+	// DeletePasswordsByGroup removes the password entries in the group.
+	DeletePasswordsByGroup(group string) error
 }
 
 type HakjpassStorage struct {
@@ -66,4 +70,32 @@ func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, er
 		return nil, err
 	}
 	return passwordEntryList.PasswordEntries, nil
+}
+
+func (s *HakjpassStorage) DeletePasswordById(id string) error {
+	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
+	if err != nil {
+		return err
+	}
+	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
+	if err != nil {
+		return err
+	}
+	counter := 0
+	for _, passwordEntry := range passwordEntryList.PasswordEntries {
+		if passwordEntry.Id != id {
+			passwordEntryList.PasswordEntries[counter] = passwordEntry
+			counter++
+		}
+	}
+	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
+	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
+	if err != nil {
+		return err
+	}
+	err = writeToFile(s.storageFilePath, updatedStorageData, PasswordStorageFilePermission)
+	if err != nil {
+		return err
+	}
+	return nil
 }

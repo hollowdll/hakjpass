@@ -25,6 +25,7 @@ func init() {
 	CmdPassword.AddCommand(cmdPasswordGen)
 	CmdPassword.AddCommand(cmdPasswordNew)
 	CmdPassword.AddCommand(cmdPasswordLs)
+	CmdPassword.AddCommand(cmdPasswordDelete)
 }
 
 func promptPassword() string {
