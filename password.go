@@ -2,6 +2,7 @@ package hakjpass
 
 import (
 	"github.com/google/uuid"
+	"github.com/hollowdll/hakjpass/internal/common"
 	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
 	"google.golang.org/protobuf/proto"
 )
@@ -38,6 +39,16 @@ func FindPasswordEntriesByGroup(passwordEntries []*passwordstoragepb.PasswordEnt
 		}
 	}
 	return matchingPasswordEntries
+}
+
+func FindPasswordGroups(passwordEntries []*passwordstoragepb.PasswordEntry) []string {
+	groups := []string{}
+	for _, passwordEntry := range passwordEntries {
+		if !common.StringInSlice(passwordEntry.Group, groups) {
+			groups = append(groups, passwordEntry.Group)
+		}
+	}
+	return groups
 }
 
 func serializePasswordEntryListToBinary(passwordEntryList *passwordstoragepb.PasswordEntryList) ([]byte, error) {

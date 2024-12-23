@@ -29,3 +29,13 @@ func PromptInput(prompt string) (string, error) {
 
 	return strings.TrimSpace(input), nil
 }
+
+// StringInSlice returns true if target is in slice.
+func StringInSlice(target string, slice []string) bool {
+	for _, elem := range slice {
+		if elem == target {
+			return true
+		}
+	}
+	return false
+}
