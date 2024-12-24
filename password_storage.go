@@ -13,9 +13,10 @@ type PasswordStorage interface {
 	// GetPasswords returns password entries.
 	GetPasswords() ([]*passwordstoragepb.PasswordEntry, error)
 	// DeletePasswords removes the password entry with the id.
-	DeletePasswordById(id string) error
+	// Returns false if the password entry is not found.
+	DeletePasswordById(id string) (bool, error)
 	// DeletePasswordsByGroup removes the password entries in the group.
-	DeletePasswordsByGroup(group string) error
+	// DeletePasswordsByGroup(group string) (bool, error)
 }
 
 type HakjpassStorage struct {
@@ -25,7 +26,7 @@ type HakjpassStorage struct {
 	symmetricKeyPassword  string
 }
 
-func NewHakjpassStorage() (*HakjpassStorage, error) {
+func NewHakjpassStorage() (PasswordStorage, error) {
 	dataDir, err := createDataDirIfNotExists()
 	if err != nil {
 		return nil, err
@@ -72,30 +73,36 @@ func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, er
 	return passwordEntryList.PasswordEntries, nil
 }
 
-func (s *HakjpassStorage) DeletePasswordById(id string) error {
+func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
 	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
-		return err
+		return false, err
 	}
 	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
 	if err != nil {
-		return err
+		return false, err
 	}
 	counter := 0
+	found := false
 	for _, passwordEntry := range passwordEntryList.PasswordEntries {
 		if passwordEntry.Id != id {
 			passwordEntryList.PasswordEntries[counter] = passwordEntry
 			counter++
+		} else {
+			found = true
 		}
+	}
+	if !found {
+		return false, nil
 	}
 	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
 	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
 	if err != nil {
-		return err
+		return false, err
 	}
 	err = writeToFile(s.storageFilePath, updatedStorageData, PasswordStorageFilePermission)
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nil
+	return true, nil
 }

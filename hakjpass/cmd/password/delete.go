@@ -1,6 +1,8 @@
 package password
 
 import (
+	"fmt"
+
 	"github.com/hollowdll/hakjpass"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +30,10 @@ func deletePasswords(cmd *cobra.Command) {
 	cobra.CheckErr(err)
 
 	if cmd.Flags().Changed("id") {
-		err = hakjpassStorage.DeletePasswordById(id)
+		ok, err := hakjpassStorage.DeletePasswordById(id)
 		cobra.CheckErr(err)
+		if !ok {
+			fmt.Println("No password entry found with the ID")
+		}
 	}
 }
