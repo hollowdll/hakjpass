@@ -7,6 +7,24 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type PasswordEntryFields struct {
+	Id          *string
+	Password    *string
+	Group       *string
+	Username    *string
+	Description *string
+}
+
+func NewPasswordEntryFields() *PasswordEntryFields {
+	return &PasswordEntryFields{
+		Id:          nil,
+		Password:    nil,
+		Group:       nil,
+		Username:    nil,
+		Description: nil,
+	}
+}
+
 func NewPasswordEntry(password string, username string, description string, group string) (*passwordstoragepb.PasswordEntry, error) {
 	id, err := uuid.NewV7()
 	if err != nil {

@@ -18,6 +18,9 @@ type PasswordStorage interface {
 	// DeletePasswordsByGroup removes the password entries in the group.
 	// Returns false if the group does not exist.
 	DeletePasswordsByGroup(group string) (bool, error)
+	// EditPasswordById edits the fields of a password entry.
+	// Returns false if the password entry is not found.
+	EditPasswordById(id string, passwordEntryFields *PasswordEntryFields) (bool, error)
 }
 
 type HakjpassStorage struct {
@@ -107,6 +110,40 @@ func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
 		return false, nil
 	}
 	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
+	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *PasswordEntryFields) (bool, error) {
+	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	if err != nil {
+		return false, err
+	}
+	found := false
+	for _, passwordEntry := range passwordEntryList.PasswordEntries {
+		if passwordEntry.Id == id {
+			found = true
+			if passwordEntryFields.Password != nil {
+				passwordEntry.Password = *passwordEntryFields.Password
+			}
+			if passwordEntryFields.Group != nil {
+				passwordEntry.Group = *passwordEntryFields.Group
+			}
+			if passwordEntryFields.Username != nil {
+				passwordEntry.Username = *passwordEntryFields.Username
+			}
+			if passwordEntryFields.Description != nil {
+				passwordEntry.Description = *passwordEntryFields.Description
+			}
+			break
+		}
+	}
+	if !found {
+		return false, nil
+	}
 	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return false, err
