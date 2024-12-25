@@ -42,20 +42,12 @@ func NewHakjpassStorage() (PasswordStorage, error) {
 }
 
 func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error {
-	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
-	if err != nil {
-		return err
-	}
-	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
+	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
 		return err
 	}
 	passwordEntryList.PasswordEntries = append(passwordEntryList.PasswordEntries, passwordEntry)
-	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
-	if err != nil {
-		return err
-	}
-	err = writeToFile(s.storageFilePath, updatedStorageData, PasswordStorageFilePermission)
+	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return err
 	}
@@ -63,11 +55,7 @@ func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.Password
 }
 
 func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, error) {
-	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
-	if err != nil {
-		return nil, err
-	}
-	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
+	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
 		return nil, err
 	}
@@ -75,11 +63,7 @@ func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, er
 }
 
 func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
-	storageData, err := readFile(s.storageFilePath, PasswordStorageFilePermission)
-	if err != nil {
-		return false, err
-	}
-	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
+	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
 	}
@@ -97,11 +81,7 @@ func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
 		return false, nil
 	}
 	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
-	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
-	if err != nil {
-		return false, err
-	}
-	err = writeToFile(s.storageFilePath, updatedStorageData, PasswordStorageFilePermission)
+	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return false, err
 	}

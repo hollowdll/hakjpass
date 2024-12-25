@@ -25,7 +25,7 @@ It is possible to list passwords by password group by specifying the group with 
 func init() {
 	cmdPasswordLs.Flags().StringVarP(&group, "group", "g", "", "Password group")
 	cmdPasswordLs.Flags().StringVar(&id, "id", "", "Password entry ID")
-	cmdPasswordLs.Flags().BoolVar(&showPassword, "show-password", false, "Show password")
+	cmdPasswordLs.Flags().BoolVarP(&showPassword, "show", "s", false, "Show password")
 }
 
 func listPasswords(cmd *cobra.Command) {
