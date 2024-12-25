@@ -17,10 +17,10 @@ The generated password includes at least one upper case letter, lower case lette
 number and special character.
 `,
 		Example: `# Generate random secure password with default length 20
-hakjpass gen
+hakjpass password gen
 
 # Generate random secure password with length 30
-hakjpass gen --length 30`,
+hakjpass password gen --length 30`,
 		Run: func(cmd *cobra.Command, args []string) {
 			generateRandomSecurePassword()
 		},

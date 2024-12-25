@@ -14,6 +14,11 @@ var (
 If they are not specified with flags, the user is prompted to enter them. Password is always prompted
 and the input is not echoed to the terminal to improve security.
 `,
+		Example: `# Prompt to enter all the fields of the new password entry
+hakjpass password new
+
+# Specify the group with flag without prompting to enter it
+hakjpass password new -g group1`,
 		Run: func(cmd *cobra.Command, args []string) {
 			saveNewPassword(cmd)
 		},

@@ -14,8 +14,17 @@ var (
 		Use:   "ls",
 		Short: "List saved passwords",
 		Long: `List saved passwords. If no flags specified, this lists all the saved passwords.
-It is possible to list passwords by password group by specifying the group with a flag.
+It is possible to list passwords by the password entry id or password group using flags --id and --group.
+By default the passwords are hidden, but can be shown with --show flag.
 `,
+		Example: `# List by password group
+hakjpass password ls -g group1
+
+# List by id
+hakjpass password ls --id 0193fe31-7675-761e-a7b8-5ee4663ddcd1
+
+# Show the password
+hakjpass password ls --show`,
 		Run: func(cmd *cobra.Command, args []string) {
 			listPasswords(cmd)
 		},
