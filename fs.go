@@ -3,6 +3,8 @@ package hakjpass
 import (
 	"os"
 	"path/filepath"
+
+	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
 )
 
 const (
@@ -80,4 +82,28 @@ func FileExists(filepath string) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+func writePasswordStorageFile(filepath string, perm os.FileMode, passwordEntryList *passwordstoragepb.PasswordEntryList) error {
+	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
+	if err != nil {
+		return err
+	}
+	err = writeToFile(filepath, updatedStorageData, perm)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func readPasswordStorageFile(filepath string, perm os.FileMode) (*passwordstoragepb.PasswordEntryList, error) {
+	storageData, err := readFile(filepath, perm)
+	if err != nil {
+		return nil, err
+	}
+	passwordEntryList, err := deserializePasswordEntryListFromBinary(storageData)
+	if err != nil {
+		return nil, err
+	}
+	return passwordEntryList, nil
 }

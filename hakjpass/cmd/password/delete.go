@@ -36,4 +36,12 @@ func deletePasswords(cmd *cobra.Command) {
 			fmt.Println("No password entry found with the ID")
 		}
 	}
+
+	if cmd.Flags().Changed("group") {
+		ok, err := hakjpassStorage.DeletePasswordsByGroup(group)
+		cobra.CheckErr(err)
+		if !ok {
+			fmt.Println("Password group not found")
+		}
+	}
 }
