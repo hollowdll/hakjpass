@@ -20,6 +20,7 @@ var (
 	id            string
 	showPassword  bool
 	enterPassword bool
+	numberOnly    bool
 )
 
 func init() {

@@ -10,6 +10,7 @@ var (
 		Short: "Manage password groups",
 		Long:  "Manage password groups",
 	}
+	numberOnly = false
 )
 
 func init() {

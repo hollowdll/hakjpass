@@ -35,6 +35,7 @@ func init() {
 	cmdPasswordLs.Flags().StringVarP(&group, "group", "g", "", "Password group")
 	cmdPasswordLs.Flags().StringVar(&id, "id", "", "Password entry ID")
 	cmdPasswordLs.Flags().BoolVarP(&showPassword, "show", "s", false, "Show password")
+	cmdPasswordLs.Flags().BoolVarP(&numberOnly, "number-only", "N", false, "Show only the number of results")
 }
 
 func listPasswords(cmd *cobra.Command) {
@@ -56,21 +57,25 @@ func listPasswords(cmd *cobra.Command) {
 		}
 	}
 
-	var builder strings.Builder
-	for _, passwordEntry := range passwordEntries {
-		password := hidePassword(passwordEntry.Password)
-		if showPassword {
-			password = passwordEntry.Password
+	if numberOnly {
+		fmt.Printf("Number of results: %d\n", len(passwordEntries))
+	} else {
+		var builder strings.Builder
+		for _, passwordEntry := range passwordEntries {
+			password := hidePassword(passwordEntry.Password)
+			if showPassword {
+				password = passwordEntry.Password
+			}
+			builder.WriteString(
+				fmt.Sprintf("ID: %s\nGroup: %s\nUsername: %s\nPassword: %s\nDescription: %s\n\n",
+					passwordEntry.Id,
+					passwordEntry.Group,
+					passwordEntry.Username,
+					password,
+					passwordEntry.Description))
 		}
-		builder.WriteString(
-			fmt.Sprintf("ID: %s\nGroup: %s\nUsername: %s\nPassword: %s\nDescription: %s\n\n",
-				passwordEntry.Id,
-				passwordEntry.Group,
-				passwordEntry.Username,
-				password,
-				passwordEntry.Description))
+		fmt.Print(builder.String())
 	}
-	fmt.Print(builder.String())
 }
 
 func hidePassword(password string) string {

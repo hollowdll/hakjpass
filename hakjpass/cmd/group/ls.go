@@ -19,11 +19,20 @@ var (
 	}
 )
 
+func init() {
+	cmdGroupLs.Flags().BoolVarP(&numberOnly, "number-only", "N", false, "Show only the number of results")
+}
+
 func listGroups() {
 	hakjpassStorage, err := hakjpass.NewHakjpassStorage()
 	cobra.CheckErr(err)
 	passwordEntries, err := hakjpassStorage.GetPasswords()
 	cobra.CheckErr(err)
+
 	groups := hakjpass.FindPasswordGroups(passwordEntries)
-	fmt.Println(strings.Join(groups, "\n"))
+	if numberOnly {
+		fmt.Printf("Number of results: %d\n", len(groups))
+	} else {
+		fmt.Println(strings.Join(groups, "\n"))
+	}
 }
