@@ -1,6 +1,8 @@
 package hakjpass
 
 import (
+	"strings"
+
 	"github.com/google/uuid"
 	"github.com/hollowdll/hakjpass/internal/common"
 	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
@@ -33,10 +35,10 @@ func NewPasswordEntry(password string, username string, description string, grou
 
 	return &passwordstoragepb.PasswordEntry{
 		Id:          id.String(),
-		Password:    password,
-		Username:    "",
-		Description: "",
-		Group:       group,
+		Password:    strings.TrimSpace(password),
+		Username:    strings.TrimSpace(username),
+		Description: strings.TrimSpace(description),
+		Group:       strings.TrimSpace(group),
 	}, nil
 }
 
@@ -62,7 +64,7 @@ func FindPasswordEntriesByGroup(passwordEntries []*passwordstoragepb.PasswordEnt
 func FindPasswordGroups(passwordEntries []*passwordstoragepb.PasswordEntry) []string {
 	groups := []string{}
 	for _, passwordEntry := range passwordEntries {
-		if !common.StringInSlice(passwordEntry.Group, groups) {
+		if passwordEntry.Group != "" && !common.StringInSlice(passwordEntry.Group, groups) {
 			groups = append(groups, passwordEntry.Group)
 		}
 	}

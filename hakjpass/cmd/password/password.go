@@ -14,11 +14,12 @@ var (
 		Short: "Manage passwords",
 		Long:  "Manage passwords",
 	}
-	group        string
-	username     string
-	description  string
-	id           string
-	showPassword bool
+	group         string
+	username      string
+	description   string
+	id            string
+	showPassword  bool
+	enterPassword bool
 )
 
 func init() {
@@ -26,6 +27,7 @@ func init() {
 	CmdPassword.AddCommand(cmdPasswordNew)
 	CmdPassword.AddCommand(cmdPasswordLs)
 	CmdPassword.AddCommand(cmdPasswordDelete)
+	CmdPassword.AddCommand(cmdPasswordEdit)
 }
 
 func promptPassword() string {

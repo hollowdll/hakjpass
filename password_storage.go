@@ -2,6 +2,7 @@ package hakjpass
 
 import (
 	"path/filepath"
+	"strings"
 
 	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
 )
@@ -127,16 +128,16 @@ func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *Passw
 		if passwordEntry.Id == id {
 			found = true
 			if passwordEntryFields.Password != nil {
-				passwordEntry.Password = *passwordEntryFields.Password
+				passwordEntry.Password = strings.TrimSpace(*passwordEntryFields.Password)
 			}
 			if passwordEntryFields.Group != nil {
-				passwordEntry.Group = *passwordEntryFields.Group
+				passwordEntry.Group = strings.TrimSpace(*passwordEntryFields.Group)
 			}
 			if passwordEntryFields.Username != nil {
-				passwordEntry.Username = *passwordEntryFields.Username
+				passwordEntry.Username = strings.TrimSpace(*passwordEntryFields.Username)
 			}
 			if passwordEntryFields.Description != nil {
-				passwordEntry.Description = *passwordEntryFields.Description
+				passwordEntry.Description = strings.TrimSpace(*passwordEntryFields.Description)
 			}
 			break
 		}
