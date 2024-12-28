@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"golang.org/x/term"
 )
 
 func ContainsCharFromCharset(input string, charset string) bool {
@@ -28,6 +30,19 @@ func PromptInput(prompt string) (string, error) {
 	}
 
 	return strings.TrimSpace(input), nil
+}
+
+// PromptPassword prompts the user to enter a password.
+// The input is not echoed to the terminal.
+func PromptPassword() (string, error) {
+	fmt.Print("Password (input hidden): ")
+	fd := int(os.Stdin.Fd())
+	bytes, err := term.ReadPassword(fd)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println()
+	return string(bytes), nil
 }
 
 // StringInSlice returns true if target is in slice.

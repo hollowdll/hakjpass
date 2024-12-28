@@ -8,11 +8,12 @@ import (
 )
 
 const (
-	PasswordStorageFileName       string = "hakjpass_storage"
-	PasswordStorageBackupFileName string = "hakjpass_storage.bak"
-	HakjpassDataDirName           string = ".hakjpass-data"
-	dataDirPermission                    = 0700
-	PasswordStorageFilePermission        = 0600
+	PasswordStorageFileName             string = "hakjpass_storage"
+	PasswordStorageBackupFileName       string = "hakjpass_storage.bak"
+	PasswordStorageSymmetricKeyFileName string = "hakjpass_storage_key"
+	HakjpassDataDirName                 string = ".hakjpass-data"
+	dataDirPermission                          = 0700
+	PasswordStorageFilePermission              = 0600
 )
 
 func writeToFile(filepath string, data []byte, perm os.FileMode) error {

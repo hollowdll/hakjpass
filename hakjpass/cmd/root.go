@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/hollowdll/hakjpass/hakjpass/cmd/group"
+	"github.com/hollowdll/hakjpass/hakjpass/cmd/key"
 	"github.com/hollowdll/hakjpass/hakjpass/cmd/password"
 	"github.com/spf13/cobra"
 )
@@ -20,6 +21,7 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(password.CmdPassword)
 	rootCmd.AddCommand(group.CmdGroup)
+	rootCmd.AddCommand(key.CmdKey)
 
 	rootCmd.DisableAutoGenTag = true
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
