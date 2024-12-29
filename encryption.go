@@ -30,12 +30,31 @@ func GenerateEncryptionKeyWithPassword(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	derivedKey := deriveKey(password, salt)
 	ciphertext, err := encryptData(key, derivedKey)
 	if err != nil {
 		return "", err
 	}
+
 	return combineSaltAndCiphertext(salt, ciphertext), nil
+}
+
+// DecryptEncryptionKeyWithPassword decrypts the encypted encryption key with the password
+// from the salt and key combination. It returns the plaintext key.
+func DecryptEncryptionKeyWithPassword(encryptedKeyCombination string, password string) ([]byte, error) {
+	salt, ciphertext, err := splitCombinedSaltAndCiphertext(encryptedKeyCombination)
+	if err != nil {
+		return nil, err
+	}
+
+	derivedKey := deriveKey(password, salt)
+	key, err := decryptData(ciphertext, derivedKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return key, nil
 }
 
 func generateRandomBytes(size int) ([]byte, error) {

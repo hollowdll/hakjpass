@@ -46,12 +46,12 @@ func NewHakjpassStorage() (PasswordStorage, error) {
 }
 
 func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error {
-	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return err
 	}
 	passwordEntryList.PasswordEntries = append(passwordEntryList.PasswordEntries, passwordEntry)
-	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
+	err = s.writePasswordStorageFile(PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.Password
 }
 
 func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, error) {
-	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, er
 }
 
 func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
-	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
 	}
@@ -85,7 +85,7 @@ func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
 		return false, nil
 	}
 	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
-	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
+	err = s.writePasswordStorageFile(PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return false, err
 	}
@@ -93,7 +93,7 @@ func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
 }
 
 func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
-	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
 	}
@@ -111,7 +111,7 @@ func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
 		return false, nil
 	}
 	passwordEntryList.PasswordEntries = passwordEntryList.PasswordEntries[:counter]
-	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
+	err = s.writePasswordStorageFile(PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return false, err
 	}
@@ -119,7 +119,7 @@ func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
 }
 
 func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *PasswordEntryFields) (bool, error) {
-	passwordEntryList, err := readPasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission)
+	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
 	}
@@ -145,7 +145,7 @@ func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *Passw
 	if !found {
 		return false, nil
 	}
-	err = writePasswordStorageFile(s.storageFilePath, PasswordStorageFilePermission, passwordEntryList)
+	err = s.writePasswordStorageFile(PasswordStorageFilePermission, passwordEntryList)
 	if err != nil {
 		return false, err
 	}

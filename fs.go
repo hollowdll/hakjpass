@@ -85,20 +85,20 @@ func FileExists(filepath string) (bool, error) {
 	return true, nil
 }
 
-func writePasswordStorageFile(filepath string, perm os.FileMode, passwordEntryList *passwordstoragepb.PasswordEntryList) error {
+func (s *HakjpassStorage) writePasswordStorageFile(perm os.FileMode, passwordEntryList *passwordstoragepb.PasswordEntryList) error {
 	updatedStorageData, err := serializePasswordEntryListToBinary(passwordEntryList)
 	if err != nil {
 		return err
 	}
-	err = writeToFile(filepath, updatedStorageData, perm)
+	err = writeToFile(s.storageFilePath, updatedStorageData, perm)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func readPasswordStorageFile(filepath string, perm os.FileMode) (*passwordstoragepb.PasswordEntryList, error) {
-	storageData, err := readFile(filepath, perm)
+func (s *HakjpassStorage) readPasswordStorageFile(perm os.FileMode) (*passwordstoragepb.PasswordEntryList, error) {
+	storageData, err := readFile(s.storageFilePath, perm)
 	if err != nil {
 		return nil, err
 	}
