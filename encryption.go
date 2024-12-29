@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"strings"
 
+	"github.com/hollowdll/hakjpass/errors"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -25,11 +26,16 @@ func GenerateEncryptionKeyWithPassword(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	encryptedKey, salt, err := encryptEncryptionKeyWithPassword(key, password)
+	salt, err := generateRandomBytes(saltSize)
 	if err != nil {
 		return "", err
 	}
-	return combineSaltAndEncryptedKey(salt, encryptedKey), nil
+	derivedKey := deriveKey(password, salt)
+	ciphertext, err := encryptData(key, derivedKey)
+	if err != nil {
+		return "", err
+	}
+	return combineSaltAndCiphertext(salt, ciphertext), nil
 }
 
 func generateRandomBytes(size int) ([]byte, error) {
@@ -44,40 +50,61 @@ func deriveKey(password string, salt []byte) []byte {
 	return pbkdf2.Key([]byte(password), salt, iterations, keySize, sha256.New)
 }
 
-func combineSaltAndEncryptedKey(salt string, encryptedKey string) string {
-	return salt + ":" + encryptedKey
+func combineSaltAndCiphertext(salt []byte, ciphertext []byte) string {
+	return base64.StdEncoding.EncodeToString(salt) + ":" + base64.StdEncoding.EncodeToString(ciphertext)
 }
 
-func splitCombinedSaltAndEncryptedKey(combination string) (string, string) {
+func splitCombinedSaltAndCiphertext(combination string) ([]byte, []byte, error) {
 	substrings := strings.Split(combination, ":")
 	if len(substrings) == 2 {
-		return substrings[0], substrings[1]
+		salt, err := base64.StdEncoding.DecodeString(substrings[0])
+		if err != nil {
+			return nil, nil, err
+		}
+		ciphertext, err := base64.StdEncoding.DecodeString(substrings[1])
+		if err != nil {
+			return nil, nil, err
+		}
+		return salt, ciphertext, nil
 	} else {
-		return "", ""
+		return nil, nil, errors.ErrEncryptedKeyInvalid
 	}
 }
 
-// encryptEncryptionKeyWithPassword encrypts a key with a password.
-// Returns the salt and encrypted key as base64 strings.
-func encryptEncryptionKeyWithPassword(key []byte, password string) (string, string, error) {
-	salt, err := generateRandomBytes(saltSize)
+func encryptData(data []byte, key []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", "", err
-	}
-	derivedKey := deriveKey(password, salt)
-	block, err := aes.NewCipher(derivedKey)
-	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 
-	ciphertext := make([]byte, aes.BlockSize+len(key))
+	ciphertext := make([]byte, aes.BlockSize+len(data))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err = rand.Read(iv); err != nil {
-		return "", "", err
+		return nil, err
 	}
 
 	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[aes.BlockSize:], key)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], data)
 
-	return base64.StdEncoding.EncodeToString(ciphertext), base64.StdEncoding.EncodeToString(salt), nil
+	return ciphertext, nil
+}
+
+func decryptData(ciphertext []byte, key []byte) ([]byte, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ciphertext) < aes.BlockSize {
+		return nil, errors.ErrCiphertextTooShort
+	}
+
+	iv := ciphertext[:aes.BlockSize]
+	ciphertext = ciphertext[aes.BlockSize:]
+	plaintext := make([]byte, len(ciphertext))
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+	stream.XORKeyStream(plaintext, ciphertext)
+
+	return plaintext, nil
 }
