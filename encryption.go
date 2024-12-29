@@ -109,6 +109,10 @@ func encryptData(data []byte, key []byte) ([]byte, error) {
 }
 
 func decryptData(ciphertext []byte, key []byte) ([]byte, error) {
+	if len(ciphertext) <= 0 {
+		return []byte{}, nil
+	}
+
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err

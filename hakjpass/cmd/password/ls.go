@@ -67,7 +67,7 @@ func listPasswords(cmd *cobra.Command) {
 				password = passwordEntry.Password
 			}
 			builder.WriteString(
-				fmt.Sprintf("ID: %s\nGroup: %s\nUsername: %s\nPassword: %s\nDescription: %s\n\n",
+				fmt.Sprintf("{\n  ID: %s\n  Group: %s\n  Username: %s\n  Password: %s\n  Description: %s\n}\n",
 					passwordEntry.Id,
 					passwordEntry.Group,
 					passwordEntry.Username,

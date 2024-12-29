@@ -137,7 +137,9 @@ The user is advised to keep the password safe and to backup the key and the pass
 It is also possible to rotate the key by using the commands under 'hakjpass key'.
 Run command 'hakjpass key --help' for more information.
 When rotating the key, the user should replace the password storage file backup with the new file
-because the old file cannot be decrypted anymore with the new key.\n`)
+because the old file cannot be decrypted anymore with the new key.
+
+`)
 		password, err = common.PromptEncryptionKeyPassword()
 		if err != nil {
 			return err
