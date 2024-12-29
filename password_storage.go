@@ -27,8 +27,8 @@ type PasswordStorage interface {
 type HakjpassStorage struct {
 	storageFilePath       string
 	storageBackupFilePath string
-	symmetricKeyFilePath  string
-	symmetricKeyPassword  string
+	encryptionKeyFilePath string
+	encryptionKey         []byte
 }
 
 func NewHakjpassStorage() (PasswordStorage, error) {
@@ -40,12 +40,16 @@ func NewHakjpassStorage() (PasswordStorage, error) {
 	return &HakjpassStorage{
 		storageFilePath:       filepath.Join(dataDir, PasswordStorageFileName),
 		storageBackupFilePath: filepath.Join(dataDir, PasswordStorageBackupFileName),
-		symmetricKeyFilePath:  "",
-		symmetricKeyPassword:  "",
+		encryptionKeyFilePath: filepath.Join(dataDir, EncryptionKeyFileName),
+		encryptionKey:         []byte{},
 	}, nil
 }
 
 func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.PasswordEntry) error {
+	err := s.readEncryptionKeyFile(EncryptionKeyFilePermission)
+	if err != nil {
+		return err
+	}
 	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return err
@@ -59,6 +63,10 @@ func (s *HakjpassStorage) SavePassword(passwordEntry *passwordstoragepb.Password
 }
 
 func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, error) {
+	err := s.readEncryptionKeyFile(EncryptionKeyFilePermission)
+	if err != nil {
+		return nil, err
+	}
 	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return nil, err
@@ -67,6 +75,10 @@ func (s *HakjpassStorage) GetPasswords() ([]*passwordstoragepb.PasswordEntry, er
 }
 
 func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
+	err := s.readEncryptionKeyFile(EncryptionKeyFilePermission)
+	if err != nil {
+		return false, err
+	}
 	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
@@ -93,6 +105,10 @@ func (s *HakjpassStorage) DeletePasswordById(id string) (bool, error) {
 }
 
 func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
+	err := s.readEncryptionKeyFile(EncryptionKeyFilePermission)
+	if err != nil {
+		return false, err
+	}
 	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err
@@ -119,6 +135,10 @@ func (s *HakjpassStorage) DeletePasswordsByGroup(group string) (bool, error) {
 }
 
 func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *PasswordEntryFields) (bool, error) {
+	err := s.readEncryptionKeyFile(EncryptionKeyFilePermission)
+	if err != nil {
+		return false, err
+	}
 	passwordEntryList, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return false, err

@@ -45,6 +45,11 @@ func PromptPassword() (string, error) {
 	return string(bytes), nil
 }
 
+func PromptEncryptionKeyPassword() (string, error) {
+	fmt.Println("Enter encryption key password")
+	return PromptPassword()
+}
+
 // StringInSlice returns true if target is in slice.
 func StringInSlice(target string, slice []string) bool {
 	for _, elem := range slice {
