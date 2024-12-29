@@ -1,10 +1,10 @@
 package key
 
 import (
-	"encoding/hex"
 	"fmt"
 
 	"github.com/hollowdll/hakjpass"
+	"github.com/hollowdll/hakjpass/internal/common"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,9 @@ func init() {
 }
 
 func createEncryptionKey() {
-	encryptionKey, err := hakjpass.GenerateEncryptionKey()
+	password, err := common.PromptPassword()
 	cobra.CheckErr(err)
-	fmt.Println(hex.EncodeToString(encryptionKey))
+	encryptionKey, err := hakjpass.GenerateEncryptionKeyWithPassword(password)
+	cobra.CheckErr(err)
+	fmt.Println(encryptionKey)
 }
