@@ -23,10 +23,6 @@ The passwords storage file cannot be accessed without the password.
 	}
 )
 
-func init() {
-
-}
-
 func createEncryptionKey() {
 	password, err := common.PromptPassword()
 	cobra.CheckErr(err)

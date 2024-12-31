@@ -193,11 +193,12 @@ func (s *HakjpassStorage) RotateEncryptionKey(newKeyPath string) error {
 	if err != nil {
 		return err
 	}
-	data, err := readFileAndDecrypt(s.storageFilePath, PasswordStorageFilePermission, s.encryptionKey)
+	data, err := s.readPasswordStorageFile(PasswordStorageFilePermission)
 	if err != nil {
 		return err
 	}
-	err = encryptAndWriteFile(s.storageFilePath, data, PasswordStorageFilePermission, newKey)
+	s.encryptionKey = newKey
+	err = s.writePasswordStorageFile(PasswordStorageFilePermission, data)
 	if err != nil {
 		return err
 	}
