@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hollowdll/hakjpass/internal/common"
 	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
 )
 
@@ -22,6 +23,10 @@ type PasswordStorage interface {
 	// EditPasswordById edits the fields of a password entry.
 	// Returns false if the password entry is not found.
 	EditPasswordById(id string, passwordEntryFields *PasswordEntryFields) (bool, error)
+	// RotateEncryptionKey decrypts the password storage file
+	// and encrypts it again with the new encryption key.
+	// After this it replaces the current key with the new key.
+	RotateEncryptionKey(newKeyPath string) error
 }
 
 type HakjpassStorage struct {
@@ -170,4 +175,36 @@ func (s *HakjpassStorage) EditPasswordById(id string, passwordEntryFields *Passw
 		return false, err
 	}
 	return true, nil
+}
+
+func (s *HakjpassStorage) RotateEncryptionKey(newKeyPath string) error {
+	if err := s.readEncryptionKeyFile(EncryptionKeyFilePermission); err != nil {
+		return err
+	}
+	encryptedNewKey, err := readFileWithoutCreating(newKeyPath)
+	if err != nil {
+		return err
+	}
+	newKeyPassword, err := common.PromptPasswordWithPrecedingText("Enter password for the new encryption key")
+	if err != nil {
+		return err
+	}
+	newKey, err := DecryptEncryptionKeyWithPassword(string(encryptedNewKey), newKeyPassword)
+	if err != nil {
+		return err
+	}
+	data, err := readFileAndDecrypt(s.storageFilePath, PasswordStorageFilePermission, s.encryptionKey)
+	if err != nil {
+		return err
+	}
+	err = encryptAndWriteFile(s.storageFilePath, data, PasswordStorageFilePermission, newKey)
+	if err != nil {
+		return err
+	}
+	err = writeFile(s.encryptionKeyFilePath, encryptedNewKey, EncryptionKeyFilePermission)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

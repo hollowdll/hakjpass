@@ -8,8 +8,10 @@ var (
 		Short: "Manage encryption keys",
 		Long:  "Manage encryption keys",
 	}
+	newKeyPath string
 )
 
 func init() {
 	CmdKey.AddCommand(cmdKeyNew)
+	CmdKey.AddCommand(cmdKeyRotate)
 }

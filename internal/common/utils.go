@@ -45,8 +45,8 @@ func PromptPassword() (string, error) {
 	return string(bytes), nil
 }
 
-func PromptEncryptionKeyPassword() (string, error) {
-	fmt.Println("Enter encryption key password")
+func PromptPasswordWithPrecedingText(text string) (string, error) {
+	fmt.Println(text)
 	return PromptPassword()
 }
 

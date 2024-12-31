@@ -19,7 +19,7 @@ const (
 	EncryptionKeyFilePermission          = 0600
 )
 
-func writeToFile(filepath string, data []byte, perm os.FileMode) error {
+func writeFile(filepath string, data []byte, perm os.FileMode) error {
 	err := os.WriteFile(filepath, data, perm)
 	if err != nil {
 		return err
@@ -51,6 +51,34 @@ func readFile(filepath string, perm os.FileMode) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+func encryptAndWriteFile(filepath string, data []byte, perm os.FileMode, key []byte) error {
+	encryptedData, err := encryptData(data, key)
+	if err != nil {
+		return err
+	}
+	err = writeFile(filepath, encryptedData, perm)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func readFileAndDecrypt(filepath string, perm os.FileMode, key []byte) ([]byte, error) {
+	encryptedData, err := readFile(filepath, perm)
+	if err != nil {
+		return nil, err
+	}
+	decryptedData, err := decryptData(encryptedData, key)
+	if err != nil {
+		return nil, err
+	}
+	return decryptedData, nil
+}
+
+func readFileWithoutCreating(filepath string) ([]byte, error) {
+	return os.ReadFile(filepath)
 }
 
 func createDataDirIfNotExists() (string, error) {
@@ -93,11 +121,7 @@ func (s *HakjpassStorage) writePasswordStorageFile(perm os.FileMode, passwordEnt
 	if err != nil {
 		return err
 	}
-	encryptedData, err := encryptData(data, s.encryptionKey)
-	if err != nil {
-		return err
-	}
-	err = writeToFile(s.storageFilePath, encryptedData, perm)
+	err = encryptAndWriteFile(s.storageFilePath, data, perm, s.encryptionKey)
 	if err != nil {
 		return err
 	}
@@ -105,11 +129,7 @@ func (s *HakjpassStorage) writePasswordStorageFile(perm os.FileMode, passwordEnt
 }
 
 func (s *HakjpassStorage) readPasswordStorageFile(perm os.FileMode) (*passwordstoragepb.PasswordEntryList, error) {
-	encryptedData, err := readFile(s.storageFilePath, perm)
-	if err != nil {
-		return nil, err
-	}
-	decryptedData, err := decryptData(encryptedData, s.encryptionKey)
+	decryptedData, err := readFileAndDecrypt(s.storageFilePath, perm, s.encryptionKey)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +160,7 @@ When rotating the key, the user should replace the password storage file backup 
 because the old file cannot be decrypted anymore with the new key.
 
 `)
-		password, err = common.PromptEncryptionKeyPassword()
+		password, err = common.PromptPasswordWithPrecedingText("Enter password for the encryption key")
 		if err != nil {
 			return err
 		}
@@ -148,12 +168,12 @@ because the old file cannot be decrypted anymore with the new key.
 		if err != nil {
 			return err
 		}
-		err = writeToFile(s.encryptionKeyFilePath, []byte(encryptedKeyStr), EncryptionKeyFilePermission)
+		err = writeFile(s.encryptionKeyFilePath, []byte(encryptedKeyStr), EncryptionKeyFilePermission)
 		if err != nil {
 			return err
 		}
 	} else {
-		password, err = common.PromptEncryptionKeyPassword()
+		password, err = common.PromptPasswordWithPrecedingText("Enter password for the encryption key")
 		if err != nil {
 			return err
 		}
