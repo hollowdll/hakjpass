@@ -22,6 +22,7 @@ func init() {
 	rootCmd.AddCommand(password.CmdPassword)
 	rootCmd.AddCommand(group.CmdGroup)
 	rootCmd.AddCommand(key.CmdKey)
+	rootCmd.AddCommand(cmdPaths)
 
 	rootCmd.DisableAutoGenTag = true
 	rootCmd.CompletionOptions.DisableDefaultCmd = true

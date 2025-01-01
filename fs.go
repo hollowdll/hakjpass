@@ -19,6 +19,16 @@ const (
 	EncryptionKeyFilePermission          = 0600
 )
 
+// GetDataDirPath returns the path to the data directory
+// where the files used by the program should be in.
+func GetDataDirPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(homeDir, HakjpassDataDirName), nil
+}
+
 func writeFile(filepath string, data []byte, perm os.FileMode) error {
 	err := os.WriteFile(filepath, data, perm)
 	if err != nil {
@@ -82,12 +92,10 @@ func readFileWithoutCreating(filepath string) ([]byte, error) {
 }
 
 func createDataDirIfNotExists() (string, error) {
-	homeDir, err := os.UserHomeDir()
+	dataDir, err := GetDataDirPath()
 	if err != nil {
 		return "", err
 	}
-
-	dataDir := filepath.Join(homeDir, HakjpassDataDirName)
 
 	err = os.MkdirAll(dataDir, dataDirPermission)
 	if err != nil {
