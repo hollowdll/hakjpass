@@ -7,7 +7,7 @@ or list all the passwords of a password group. When listing password, you can sp
 You can save other data along the password to the password entry such as username, password group and description.
 
 Passwords are managed in a password storage file. This file is encrypted using AES-256 with a symmetric encryption key.
-The key is also encrypted and protected with a password. The encryption key and password are needed to access the password storage file.
+The key is also encrypted and protected with a password using PBKDF2. The encryption key and password are needed to access the password storage file.
 
 Note: This tool is designed for technical people who know how to use CLI based apps. It is also the responsibility of the user to safely backup the password storage file and encryption keys. The encryption key password should also be kept safe!
 

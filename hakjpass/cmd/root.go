@@ -16,7 +16,7 @@ or list all the passwords of a password group. When listing password, you can sp
 You can save other data along the password to the password entry such as username, password group and description.
 
 Passwords are managed in a password storage file. This file is encrypted using AES-256 with a symmetric encryption key.
-The key is also encrypted and protected with a password. The encryption key and password are needed to access the password storage file.
+The key is also encrypted and protected with a password using PBKDF2. The encryption key and password are needed to access the password storage file.
 The key can be rotated so the password storage file will use a new key. Use 'hakjpass key rotate --help' for details.
 
 It is recommended to back up the encryption key and the password storage file using best practices. The password storage file should be
