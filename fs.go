@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/hollowdll/hakjpass/errors"
 	"github.com/hollowdll/hakjpass/internal/common"
 	passwordstoragepb "github.com/hollowdll/hakjpass/pb"
 )
@@ -133,6 +134,7 @@ func (s *HakjpassStorage) writePasswordStorageFile(perm os.FileMode, passwordEnt
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -141,10 +143,20 @@ func (s *HakjpassStorage) readPasswordStorageFile(perm os.FileMode) (*passwordst
 	if err != nil {
 		return nil, err
 	}
-	passwordEntryList, err := deserializePasswordEntryListFromBinary(decryptedData)
-	if err != nil {
-		return nil, err
+
+	var passwordEntryList *passwordstoragepb.PasswordEntryList = nil
+	if len(decryptedData) <= 0 {
+		fmt.Println("No password storage found, creating a new one...")
+		passwordEntryList = NewPasswordEntryList()
+		s.writePasswordStorageFile(PasswordStorageFilePermission, passwordEntryList)
+		fmt.Println("Password storage created! You can access it with the encryption key and the password you set")
+	} else {
+		passwordEntryList, err = deserializePasswordEntryListFromBinary(decryptedData)
+		if err != nil {
+			return nil, errors.ErrInvalidFileOrPassword
+		}
 	}
+
 	return passwordEntryList, nil
 }
 
@@ -157,7 +169,7 @@ func (s *HakjpassStorage) readEncryptionKeyFile(perm os.FileMode) error {
 	password := ""
 
 	if len(encryptedKeyStr) == 0 {
-		fmt.Printf(`No encryption key found, a new key will be created.
+		fmt.Printf(`No encryption key found, a new key will be created...
 The key will be encrypted with a password that is needed to access the password storage.
 If you lose the password or the key, you cannot access the password storage anymore.
 In this case you need to create a new password storage file and a new key.

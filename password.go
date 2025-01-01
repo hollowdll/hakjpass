@@ -42,6 +42,13 @@ func NewPasswordEntry(password string, username string, description string, grou
 	}, nil
 }
 
+func NewPasswordEntryList() *passwordstoragepb.PasswordEntryList {
+	return &passwordstoragepb.PasswordEntryList{
+		PasswordEntries: []*passwordstoragepb.PasswordEntry{},
+		Id:              uuid.New().String(),
+	}
+}
+
 func FindPasswordEntryById(passwordEntries []*passwordstoragepb.PasswordEntry, id string) *passwordstoragepb.PasswordEntry {
 	for _, passwordEntry := range passwordEntries {
 		if passwordEntry.Id == id {
