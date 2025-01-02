@@ -19,9 +19,14 @@ The tool can be installed with Go. Minimum Go version required is 1.22.
 
 Instructions for installing Go [here](https://go.dev/doc/install)
 
-Run this command to install the binary
+Run this command to install the binary:
 ```sh
 go install github.com/hollowdll/hakjpass/hakjpass@latest
+```
+
+Or a specific version:
+```sh
+go install github.com/hollowdll/hakjpass/hakjpass@v0.1.0
 ```
 
 This installs the binary to your Go bin directory. If you installed Go properly, the Go bin directory should be in your PATH environment variable. You can now use the tool from any directroy in your terminal by using:
