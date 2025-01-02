@@ -31,7 +31,6 @@ type PasswordStorage interface {
 
 type HakjpassStorage struct {
 	storageFilePath       string
-	storageBackupFilePath string
 	encryptionKeyFilePath string
 	encryptionKey         []byte
 }
@@ -44,7 +43,6 @@ func NewHakjpassStorage() (PasswordStorage, error) {
 
 	return &HakjpassStorage{
 		storageFilePath:       filepath.Join(dataDir, PasswordStorageFileName),
-		storageBackupFilePath: filepath.Join(dataDir, PasswordStorageBackupFileName),
 		encryptionKeyFilePath: filepath.Join(dataDir, EncryptionKeyFileName),
 		encryptionKey:         []byte{},
 	}, nil

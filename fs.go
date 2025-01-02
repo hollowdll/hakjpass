@@ -12,7 +12,6 @@ import (
 
 const (
 	PasswordStorageFileName       string = "hakjpass_storage"
-	PasswordStorageBackupFileName string = "hakjpass_storage.bak"
 	EncryptionKeyFileName         string = "hakjpass_storage_key"
 	HakjpassDataDirName           string = ".hakjpass-data"
 	dataDirPermission                    = 0700
