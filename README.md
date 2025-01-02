@@ -24,7 +24,7 @@ Run this command to install the binary:
 go install github.com/hollowdll/hakjpass/hakjpass@latest
 ```
 
-Or a specific version:
+Or install a specific version:
 ```sh
 go install github.com/hollowdll/hakjpass/hakjpass@v0.1.0
 ```
