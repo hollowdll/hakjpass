@@ -13,11 +13,40 @@ Note: This tool is designed for technical people who know how to use CLI based a
 
 # Install
 
-WIP
+The tool can be installed with Go. Minimum Go version required is 1.22.
+
+Instructions for installing Go [here](https://go.dev/doc/install)
+
+Run this command to install the binary
+```sh
+go install github.com/hollowdll/hakjpass/hakjpass@latest
+```
+
+This installs the binary to your Go bin directory. If you installed Go properly, the Go bin directory should be in your PATH environment variable. You can now use the tool from any directroy in your terminal by using:
+
+```sh
+hakjpass
+```
+
+If it doesn't work, find instructions how to add Go bin directory to the PATH environment variable.
 
 # Build from source
 
-WIP
+Building from source also requires having Go installed.
+
+Move to the project root where the go.mod file is and run
+```sh
+go build -o ./bin/ ./hakjpass/
+```
+This builds the binary to the ./bin directory creating it if it doesn't exist
+
+Alternatively use the build script which does the same thing
+```sh
+# give permission to execute
+chmod u+x build.sh
+# run the script
+./build.sh
+```
 
 # Getting started
 
