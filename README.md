@@ -72,3 +72,21 @@ Use the below command to see the expected locations of the files
 hakjpass paths
 ```
 When importing the file backups, you need to place them to the locations shown in the command output. The command also tells you where you can find the files to take backups of them.
+
+A password entry can be saved with
+```sh
+hakjpass password new
+```
+It asks to enter the password and optional username, password group and description.
+
+You can list it with
+```sh
+hakjpass password ls
+```
+
+By default it hides the password but you can show it with
+```sh
+hakjpass password ls --show
+```
+
+These are just simple examples to get started. You can do a lot more with the tool than just these. Use the help pages of commands for detailed information.
