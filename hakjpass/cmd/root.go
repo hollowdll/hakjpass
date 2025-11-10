@@ -29,7 +29,7 @@ It is also possible to generate random secure passwords with different lengths. 
 
 Source code for this is available at https://github.com/hollowdll/hakjpass
 `,
-	Version: "0.1.0",
+	Version: "0.1.2",
 }
 
 func Execute() error {

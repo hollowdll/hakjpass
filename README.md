@@ -26,7 +26,7 @@ go install github.com/hollowdll/hakjpass/hakjpass@latest
 
 Or install a specific version:
 ```sh
-go install github.com/hollowdll/hakjpass/hakjpass@v0.1.1
+go install github.com/hollowdll/hakjpass/hakjpass@v0.1.2
 ```
 
 This installs the binary to your Go bin directory. If you installed Go properly, the Go bin directory should be in your PATH environment variable. You can now use the tool from any directroy in your terminal by using:
