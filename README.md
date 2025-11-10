@@ -15,7 +15,7 @@ Note: This tool is designed for technical people who know how to use CLI based a
 
 # Install
 
-The tool can be installed with Go. Minimum Go version required is 1.22.
+The tool can be installed with Go. Minimum Go version required is 1.25.
 
 Instructions for installing Go [here](https://go.dev/doc/install)
 
@@ -26,7 +26,7 @@ go install github.com/hollowdll/hakjpass/hakjpass@latest
 
 Or install a specific version:
 ```sh
-go install github.com/hollowdll/hakjpass/hakjpass@v0.1.0
+go install github.com/hollowdll/hakjpass/hakjpass@v0.1.1
 ```
 
 This installs the binary to your Go bin directory. If you installed Go properly, the Go bin directory should be in your PATH environment variable. You can now use the tool from any directroy in your terminal by using:
