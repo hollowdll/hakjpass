@@ -11,7 +11,7 @@ const (
 	PasswordLowerChars       = "abcdefghijklmnopqrstuvwxyz"
 	PasswordUpperChars       = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	PasswordNumberChars      = "0123456789"
-	PasswordSpecialChars     = "!@#$%^&*()-_=+[]{}|;:,.<>?/"
+	PasswordSpecialChars     = "!@#$%^&*()-_=+[]{}|;:,.<>?/~"
 	MinPasswordLength    int = 4
 )
 
